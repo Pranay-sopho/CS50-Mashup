@@ -5,7 +5,7 @@
     require("../includes/config.php");
     
     // store address
-    $ifile = __DIR__ . $argv[1];
+    $ifile = $argv[1];
     
     // make sure file exists and is readable
     if (is_readable($ifile))
@@ -19,10 +19,20 @@
             while (($data = fgetcsv($handle, 1000, "\t")) !== FALSE)
             {
                 // insert data into database
-                $rows = CS50::query("INSERT INTO places (country_code, postal_code, place_name, admin_name1, admin_code1, admin_name2, admin_code2, latitude, longitude, accuracy) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", $data[0], $data[1], $data[2], $data[3], $data[4], $data[5],  $data[6],  $data[7],  $data[8],  $data[9]);
+                $rows = CS50::query("INSERT INTO places (country_code, postal_code, place_name, admin_name1, admin_code1, admin_name2, admin_code2, admin_name3, admin_code3, latitude, longitude, accuracy) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", $data[0], $data[1], $data[2], $data[3], $data[4], $data[5],  $data[6],  $data[7],  $data[8],  $data[9], $data[10], $data[11]);
             }
+            
+            // close opened file
             fclose($handle);
         }
+        else
+        {
+            trigger_error("Could not open file to read.", E_USER_ERROR);
+        }
     }
-
+    else
+    {
+        trigger_error("Could not locate given file.", E_USER_ERROR);
+    }
+    
 ?>
