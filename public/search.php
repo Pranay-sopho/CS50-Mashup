@@ -5,7 +5,7 @@
     // numerically indexed array of places
     $places = [];
 
-    $places = CS50::query("SELECT * FROM places WHERE MATCH(postal_code, place_name) AGAINST (?)", $_GET["geo"]);
+    $places = CS50::query("SELECT * FROM places WHERE MATCH(postal_code, place_name, admin_name1) AGAINST (?)", $_GET["geo"]);
     
     // implements the autocomplete for postal codes and place name
     if (count($places) == 0)
@@ -14,10 +14,6 @@
         if (count($places) == 0)
         {
             $places = CS50::query("SELECT * FROM places WHERE postal_code LIKE ?", $_GET["geo"] . "%");
-            if (count($places) == 0)
-            {
-                $places = CS50::query("SELECT * FROM places WHERE admin_name1 = ?", $_GET["geo"]);
-            }
         }
     }
 
