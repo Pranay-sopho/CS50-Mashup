@@ -74,7 +74,26 @@ $(function() {
  */
 function addMarker(place)
 {
-    // TODO
+    var image = {
+        url: 'http://maps.google.com/mapfiles/kml/pal2/icon31.png',
+        // This marker is 20 pixels wide by 32 pixels high.
+        size: new google.maps.Size(40, 42),
+        // The origin for this image is (0, 0).
+        origin: new google.maps.Point(0, 0),
+        // The anchor for this image is the base of the flagpole at (0, 32).
+        anchor: new google.maps.Point(0, 32)
+    };
+    
+    var marker = new google.maps.Marker({
+        position: new google.maps.LatLng(place.latitude, place.longitude),
+        title: "I am a marker",
+        map: map,
+        icon: image
+    });
+    
+    marker.addListener('click', function() {
+        showInfo(marker, article);
+    });
 }
 
 /**
