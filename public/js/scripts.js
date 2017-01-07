@@ -236,6 +236,7 @@ function hideInfo()
 function removeMarkers()
 {
     var len = markers.length;
+    
     for (i = 0; i < len; i++) {
         markers[i].setMap(null);
     }
