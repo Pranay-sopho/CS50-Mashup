@@ -79,9 +79,7 @@ function addMarker(place)
         // This marker is 20 pixels wide by 32 pixels high.
         size: new google.maps.Size(40, 42),
         // The origin for this image is (0, 0).
-        origin: new google.maps.Point(0, 0),
-        // The anchor for this image is the base of the flagpole at (0, 32).
-        anchor: new google.maps.Point(0, 32)
+        origin: new google.maps.Point(0, 0)
     };
     
     var marker = new MarkerWithLabel({
@@ -97,7 +95,7 @@ function addMarker(place)
     $.getJSON("articles.php", "geo=" + place.postal_code)
     .done(function(data, textStatus, jqXHR) {
         marker.addListener('click', function() {
-            showInfo(marker, data);
+            showInfo(marker, contentgenerate(data));
         });
     })
     .fail(function(jqXHR, textStatus, errorThrown) {
@@ -105,6 +103,26 @@ function addMarker(place)
         console.log(errorThrown.toString());
     });
     
+}
+
+function contentgenerate(data)
+{
+    // start unordered list
+    var ul = "<ul>";
+    
+    // make an underscore template
+    var template = _.template("<li><a href='<%- link %>' target='_blank'><%- title %></a></li>");
+    
+    // enter articles into unordered list
+    var len = data.length;
+    for (i = 0; i < len; i++) {
+        ul += template({link: data[i].link, title: data[i].title});
+    }
+    
+    // finish unordered list
+    ul += "</ul>";
+    
+    return ul;
 }
 
 /**
