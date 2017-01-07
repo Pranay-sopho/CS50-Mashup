@@ -84,16 +84,27 @@ function addMarker(place)
         anchor: new google.maps.Point(0, 32)
     };
     
-    var marker = new google.maps.Marker({
+    var marker = new MarkerWithLabel({
         position: new google.maps.LatLng(place.latitude, place.longitude),
-        title: "I am a marker",
         map: map,
+        labelContent: place.place_name + ", " + place.admin_code1,
+        labelAnchor: new google.maps.Point(50, 0),
+        labelClass: "label",
+        labelStyle: {opacity: 0.75},
         icon: image
     });
     
-    marker.addListener('click', function() {
-        showInfo(marker, article);
+    $.getJSON("articles.php", "geo=" + place.postal_code)
+    .done(function(data, textStatus, jqXHR) {
+        marker.addListener('click', function() {
+            showInfo(marker, data);
+        });
+    })
+    .fail(function(jqXHR, textStatus, errorThrown) {
+        // log error to browser's console
+        console.log(errorThrown.toString());
     });
+    
 }
 
 /**
