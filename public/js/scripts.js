@@ -74,6 +74,7 @@ $(function() {
  */
 function addMarker(place)
 {
+    // icon for marker
     var image = {
         url: 'http://maps.google.com/mapfiles/kml/pal2/icon31.png',
         // This marker is 20 pixels wide by 32 pixels high.
@@ -82,29 +83,55 @@ function addMarker(place)
         origin: new google.maps.Point(0, 0)
     };
     
+    // make a marker with label and showing place name
     var marker = new MarkerWithLabel({
         position: new google.maps.LatLng(place.latitude, place.longitude),
         map: map,
-        labelContent: place.place_name + ", " + place.admin_code1,
+        labelContent: place.place_name + ", " + place.admin_name1,
         labelAnchor: new google.maps.Point(50, 0),
         labelClass: "label",
         labelStyle: {opacity: 0.75},
         icon: image
     });
     
+    // get content for given marker
     $.getJSON("articles.php", "geo=" + place.postal_code)
     .done(function(data, textStatus, jqXHR) {
-        marker.addListener('click', function() {
-            showInfo(marker, contentgenerate(data));
-        });
+        // if news not found for postal code search for place name along with admin name
+        if (data.length == 0) {
+            $.getJSON("articles.php", "geo=" + place.place_name + place.admin_name1)
+            .done(function(data, textStatus, jqXHR) {
+                // if no news found
+                if (data.length == 0) {
+                    marker.addListener('click', function() {
+                        showInfo(marker, "Slow news day!");
+                    });
+                }
+                else {
+                    marker.addListener('click', function() {
+                        showInfo(marker, contentgenerate(data));
+                    });
+                }
+            });
+        }
+        else {
+            marker.addListener('click', function() {
+                showInfo(marker, contentgenerate(data));
+            });
+        }
     })
     .fail(function(jqXHR, textStatus, errorThrown) {
         // log error to browser's console
         console.log(errorThrown.toString());
     });
     
+    // add markers to markers array
+    markers.push(marker);
 }
 
+/**
+ * Converts array of objects into unordered list using underscore.js
+ */
 function contentgenerate(data)
 {
     // start unordered list
@@ -122,6 +149,7 @@ function contentgenerate(data)
     // finish unordered list
     ul += "</ul>";
     
+    // return the content
     return ul;
 }
 
@@ -207,7 +235,10 @@ function hideInfo()
  */
 function removeMarkers()
 {
-    // TODO
+    var len = markers.length;
+    for (i = 0; i < len; i++) {
+        markers[i].setMap(null);
+    }
 }
 
 /**
