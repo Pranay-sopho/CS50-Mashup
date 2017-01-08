@@ -42,7 +42,7 @@ $(function() {
                 {visibility: "off"}
             ]
         }
-
+        
     ];
 
     // options for map
@@ -92,6 +92,19 @@ function addMarker(place)
         labelClass: "label",
         labelStyle: {opacity: 0.75},
         icon: image
+    });
+    
+    // bounces the marker on hovering mouse over it
+    marker.addListener('mouseover', function() {
+        if (this.getAnimation() == null || typeof this.getAnimation() === 'undefined') {
+            var that = this;
+            that.setAnimation(google.maps.Animation.BOUNCE);
+        }
+    });
+    marker.addListener('mouseout', function() {
+        if (this.getAnimation() != null) {
+            this.setAnimation(null);
+        }
     });
     
     // get content for given marker
